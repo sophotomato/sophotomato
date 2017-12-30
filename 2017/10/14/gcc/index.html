@@ -5,18 +5,19 @@
   
 
   
-  <title>Hello World | Sopho Tomato</title>
+  <title>gcc | Sopho Tomato</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+  <meta name="description" content="#include &amp;lt;&amp;gt;与#inlucde “”#include &amp;lt;&amp;gt; 会直接到系统指定的目录中去找头文件。#include “” 先到源文件所在文件夹去找，然后再到系统指定的目录中去找头文件。 gcc指定头文件的三种情况： 会在默认情况下指定到/usr/include文件夹 gcc使用了-I指定路径的方式-I dir Add the directory dir to the">
+<meta name="keywords" content="gcc">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="https://sophotomato.github.io/2017/12/30/hello-world/index.html">
+<meta property="og:title" content="gcc">
+<meta property="og:url" content="https://sophotomato.github.io/2017/10/14/gcc/index.html">
 <meta property="og:site_name" content="Sopho Tomato">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
-<meta property="og:updated_time" content="2017-12-29T05:13:05.151Z">
+<meta property="og:description" content="#include &amp;lt;&amp;gt;与#inlucde “”#include &amp;lt;&amp;gt; 会直接到系统指定的目录中去找头文件。#include “” 先到源文件所在文件夹去找，然后再到系统指定的目录中去找头文件。 gcc指定头文件的三种情况： 会在默认情况下指定到/usr/include文件夹 gcc使用了-I指定路径的方式-I dir Add the directory dir to the">
+<meta property="og:updated_time" content="2017-10-14T13:24:14.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="twitter:title" content="gcc">
+<meta name="twitter:description" content="#include &amp;lt;&amp;gt;与#inlucde “”#include &amp;lt;&amp;gt; 会直接到系统指定的目录中去找头文件。#include “” 先到源文件所在文件夹去找，然后再到系统指定的目录中去找头文件。 gcc指定头文件的三种情况： 会在默认情况下指定到/usr/include文件夹 gcc使用了-I指定路径的方式-I dir Add the directory dir to the">
   
     <link rel="alternate" href="/atom.xml" title="Sopho Tomato" type="application/atom+xml">
   
@@ -63,10 +64,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-gcc" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2017/12/30/hello-world/" class="article-date">
-  <time datetime="2017-12-30T12:02:24.498Z" itemprop="datePublished">2017-12-30</time>
+    <a href="/2017/10/14/gcc/" class="article-date">
+  <time datetime="2017-10-14T12:56:04.000Z" itemprop="datePublished">2017-10-14</time>
 </a>
     
   </div>
@@ -77,7 +78,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Hello World
+      gcc
     </h1>
   
 
@@ -85,29 +86,37 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <h4 id="include-lt-gt-与-inlucde-“”"><a href="#include-lt-gt-与-inlucde-“”" class="headerlink" title="#include &lt;&gt;与#inlucde “”"></a>#include &lt;&gt;与#inlucde “”</h4><p>#include &lt;&gt; 会直接到系统指定的目录中去找头文件。<br>#include “” 先到源文件所在文件夹去找，然后再到系统指定的目录中去找头文件。</p>
+<h4 id="gcc指定头文件的三种情况："><a href="#gcc指定头文件的三种情况：" class="headerlink" title="gcc指定头文件的三种情况："></a>gcc指定头文件的三种情况：</h4><ol>
+<li>会在默认情况下指定到/usr/include文件夹</li>
+<li>gcc使用了-I指定路径的方式<br>-I dir<br> Add the directory dir to the list of directories to be searched for<br> header files.  Directories named by -I are searched before the<br> standard system include directories.  If the directory dir is a<br> standard system include directory, the option is ignored to ensure<br> that the default search order for system directories and the<br> special treatment of system headers are not defeated .  If dir<br> begins with “=”, then the “=” will be replaced by the sysroot<br> prefix; see –sysroot and -isysroot.</li>
+<li>参数：-nostdinc使编译器不再系统缺省的头文件目录里面找头文件,一般和-I联合使用,明确限定头文件的位置。</li>
+</ol>
+<p>注：参数：-nostdinc使编译器不再系统缺省的头文件目录里面找头文件,一般和-I联合使用,明确限定头文件的位置。</p>
+<h4 id="头文件搜索顺序："><a href="#头文件搜索顺序：" class="headerlink" title="头文件搜索顺序："></a>头文件搜索顺序：</h4><ol>
+<li>由参数-I指定的路径(指定路径有多个路径时，按指定路径的顺序搜索)</li>
+<li>然后找gcc的环境变量 C_INCLUDE_PATH, CPLUS_INCLUDE_PATH, OBJC_INCLUDE_PATH</li>
+<li>再找系统指定目录<br>/usr/include<br>/usr/local/include<br>/usr/lib/gcc/x86_64-linux-gnu/5.4.0/include<h4 id="动态库"><a href="#动态库" class="headerlink" title="动态库"></a>动态库</h4>我们通过以下命令用源程序lib_test.c来创建动态库 lib_test.so。<br># gcc –o lib_test.o -c lib_test.c<br># gcc -shared -fPIC -o lib_test.so lib_test.o<br>#<br>或者直接一条指令：<br>#gcc –shared –fPIC –o lib_test.so lib_test.c<br>#<br>注意：<br>-fPIC参数声明链接库的代码段是可以共享的，<br>-shared参数声明编译为共享库。请注意这次我们编译的共享库的名字叫做<br>lib_test.so，这也是Linux共享库的一个命名的惯例了：后缀使用so，而名称使用libxxxx格式。</li>
+</ol>
+<p>接着通过以下命令编译main.c,生成目标程序main.out。<br># gcc -o main.out -L. –l_test main.c<br>#</p>
+<p>请注意为什么是-l_test?</p>
+<p>然后把库文件移动到目录/root/lib中。<br># mkdir /root/lib<br># mv lib_test.so /root/lib/ lib_test.so<br>#</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://sophotomato.github.io/2017/12/30/hello-world/" data-id="cjbtc2nfv0007h8s9p0f88cpf" class="article-share-link">Teilen</a>
+      <a data-url="https://sophotomato.github.io/2017/10/14/gcc/" data-id="cjbtc2nfk0002h8s979xgnlxn" class="article-share-link">Teilen</a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gcc/">gcc</a></li></ul>
+
     </footer>
   </div>
   
     
 <nav id="article-nav">
   
-    <a href="/2017/12/30/hello-world2/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/12/30/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Neuer</strong>
       <div class="article-nav-title">
         
@@ -117,9 +126,9 @@
     </a>
   
   
-    <a href="/2017/10/14/gcc/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2017/10/10/ip-rcv-finish/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Älter</strong>
-      <div class="article-nav-title">gcc</div>
+      <div class="article-nav-title">ip_rcv_finish()处理sk_buff数据分析</div>
     </a>
   
 </nav>

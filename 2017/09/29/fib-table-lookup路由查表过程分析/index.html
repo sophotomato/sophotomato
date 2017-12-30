@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>fib_table_lookup路由查表过程分析 - Linux-3.10 | Sopho Tomato</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本文主要分析fib_table_lookup()函数回溯(backtrace)部分的处理，其他内容之后再补充，另外或许A7可以匹配到A6，这部分内容不太确定，完后再做确认。  源码解读所有源码来自kernel.org，本文并未将该函数的全部内容列出&amp;#123;.line-numbers&amp;#125;12345678910111213141516171819202122232425262728293">
+<meta name="keywords" content="内核网络,kernel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fib_table_lookup路由查表过程分析 - Linux-3.10">
+<meta property="og:url" content="https://sophotomato.github.io/2017/09/29/fib-table-lookup路由查表过程分析/index.html">
+<meta property="og:site_name" content="Sopho Tomato">
+<meta property="og:description" content="本文主要分析fib_table_lookup()函数回溯(backtrace)部分的处理，其他内容之后再补充，另外或许A7可以匹配到A6，这部分内容不太确定，完后再做确认。  源码解读所有源码来自kernel.org，本文并未将该函数的全部内容列出&amp;#123;.line-numbers&amp;#125;12345678910111213141516171819202122232425262728293">
+<meta property="og:updated_time" content="2017-09-29T14:42:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="fib_table_lookup路由查表过程分析 - Linux-3.10">
+<meta name="twitter:description" content="本文主要分析fib_table_lookup()函数回溯(backtrace)部分的处理，其他内容之后再补充，另外或许A7可以匹配到A6，这部分内容不太确定，完后再做确认。  源码解读所有源码来自kernel.org，本文并未将该函数的全部内容列出&amp;#123;.line-numbers&amp;#125;12345678910111213141516171819202122232425262728293">
+  
+    <link rel="alternate" href="/atom.xml" title="Sopho Tomato" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Sopho Tomato</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://sophotomato.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-fib-table-lookup路由查表过程分析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/09/29/fib-table-lookup路由查表过程分析/" class="article-date">
+  <time datetime="2017-09-29T14:34:12.000Z" itemprop="datePublished">2017-09-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      fib_table_lookup路由查表过程分析 - Linux-3.10
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>本文主要分析fib_table_lookup()函数回溯(backtrace)部分的处理，其他内容之后再补充，另外或许A7可以匹配到A6，这部分内容不太确定，完后再做确认。</p>
+</blockquote>
+<h4 id="源码解读"><a href="#源码解读" class="headerlink" title="源码解读"></a>源码解读</h4><p>所有源码来自<a href="https://www.kernel.org/" target="_blank" rel="noopener">kernel.org</a>，本文并未将该函数的全部内容列出<br><figure class="highlight c"><figcaption><span>&#123;.line-numbers&#125;</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**********************************</span></span><br><span class="line"><span class="comment"> *	内核版本3.10</span></span><br><span class="line"><span class="comment"> *	函数位置：/net/ipv4/fib_trie.c	1405行</span></span><br><span class="line"><span class="comment"> *	函数说明：路由查表用函数，</span></span><br><span class="line"><span class="comment"> *	调用过程：ip_route_input_slow()-&gt;fib_lookup()-&gt;fib_table_lookup()</span></span><br><span class="line"><span class="comment"> *********************************/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib_table_lookup</span><span class="params">(struct fib_table *tb, <span class="keyword">const</span> struct flowi4 *flp,</span></span></span><br><span class="line"><span class="function"><span class="params">		     struct fib_result *res, <span class="keyword">int</span> fib_flags)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">@block_1：</span><br><span class="line">	note:所需数据结构定义以及初始化</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">tnode</span> *<span class="title">pn</span>;</span>	<span class="comment">//用作父节点	parent node;</span></span><br><span class="line">	t_key key = ntohl(flp-&gt;daddr);	<span class="comment">//待查找的地址</span></span><br><span class="line">	t_key cindex = <span class="number">0</span>;	<span class="comment">//子节点的索引号	child index</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">tnode</span> *<span class="title">cn</span>;</span>	<span class="comment">//用作子节点	child node;</span></span><br><span class="line">@block_2:</span><br><span class="line">	note:首先从根节点开始，n为null，则直接到(failed)去处理，返回<span class="number">1</span>,退出查找</span><br><span class="line">	n = rcu_dereference(t-&gt;trie);</span><br><span class="line">	<span class="keyword">if</span> (!n)</span><br><span class="line">		<span class="keyword">goto</span> failed;</span><br><span class="line">@block_3:</span><br><span class="line">	note:根为leaf，则直接检查leaf的信息，之后跳转到(found)去处理，返回ret，退出查找</span><br><span class="line">	<span class="keyword">if</span> (IS_LEAF(n)) &#123;</span><br><span class="line">		ret = check_leaf(tb, t, (struct leaf *)n, key, flp, res, fib_flags);</span><br><span class="line">		<span class="keyword">goto</span> found;</span><br><span class="line">	&#125;</span><br><span class="line">@block_4:</span><br><span class="line">	note:该部分处理n为tnode</span><br><span class="line">	pn = (struct tnode *) n;	<span class="comment">//n为一个tnode，接下来要把这个tnode作为一个parent node来用，然后，查找它的child node</span></span><br><span class="line">	chopped_off = <span class="number">0</span>;	<span class="comment">//这个变量用来保存不匹配的位数，不匹配的内容，我们需要把他切掉，</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (pn) &#123;</span><br><span class="line">		pos = pn-&gt;pos;	<span class="comment">//该node所匹配的可匹配地址的起始位，</span></span><br><span class="line">		bits = pn-&gt;bits;	<span class="comment">//表示起始位之后的位数</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (!chopped_off)</span><br><span class="line">			cindex = tkey_extract_bits(mask_pfx(key, current_prefix_length),</span><br><span class="line">							 pos, bits);	<span class="comment">//取出bits，即child的索引</span></span><br><span class="line">		n = tnode_get_child_rcu(pn, cindex);	<span class="comment">//根据cindex取得child</span></span><br><span class="line"></span><br><span class="line">@block_4_1:</span><br><span class="line">		<span class="keyword">if</span> (n == <span class="literal">NULL</span>) &#123;</span><br><span class="line">			<span class="keyword">goto</span> backtrace;</span><br><span class="line">		&#125;</span><br><span class="line">@block_4_2:</span><br><span class="line">		<span class="keyword">if</span> (IS_LEAF(n)) &#123;	<span class="comment">//child 是一个leaf，进行处理</span></span><br><span class="line">			ret = check_leaf(tb, t, (struct leaf *)n, key, flp, res, fib_flags);</span><br><span class="line">			<span class="keyword">if</span> (ret &gt; <span class="number">0</span>)</span><br><span class="line">				<span class="keyword">goto</span> backtrace;</span><br><span class="line">			<span class="keyword">goto</span> found;</span><br><span class="line">		&#125;</span><br><span class="line">@block_4_3:</span><br><span class="line">		cn = (struct tnode *)n;	<span class="comment">//child 是一个node,进行处理</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (current_prefix_length &lt; pos+bits) &#123;</span><br><span class="line">			<span class="keyword">if</span> (tkey_extract_bits(cn-&gt;key, current_prefix_length,</span><br><span class="line">					cn-&gt;pos - current_prefix_length)</span><br><span class="line">					|| !(cn-&gt;child[<span class="number">0</span>]))</span><br><span class="line">				<span class="keyword">goto</span> backtrace;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		pref_mismatch = mask_pfx(cn-&gt;key ^ key, cn-&gt;pos);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (pref_mismatch) &#123;</span><br><span class="line">			<span class="comment">/* fls(x) = __fls(x) + 1 */</span></span><br><span class="line">			<span class="keyword">int</span> mp = KEYLENGTH - __fls(pref_mismatch) - <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (tkey_extract_bits(cn-&gt;key, mp, cn-&gt;pos - mp) != <span class="number">0</span>)</span><br><span class="line">				<span class="keyword">goto</span> backtrace;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (current_prefix_length &gt;= cn-&gt;pos)</span><br><span class="line">				current_prefix_length = mp;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		pn = (struct tnode *)n; <span class="comment">/* Descend */</span></span><br><span class="line">		chopped_off = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">backtrace:</span><br><span class="line">		chopped_off++;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* As zero don't change the child key (cindex) */</span></span><br><span class="line">		<span class="keyword">while</span> ((chopped_off &lt;= pn-&gt;bits) &amp;&amp; !(cindex &amp; (<span class="number">1</span>&lt;&lt;(chopped_off<span class="number">-1</span>))))</span><br><span class="line">			chopped_off++;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Decrease current_... with bits chopped off */</span></span><br><span class="line">		<span class="keyword">if</span> (current_prefix_length &gt; pn-&gt;pos + pn-&gt;bits - chopped_off)</span><br><span class="line">			current_prefix_length = pn-&gt;pos + pn-&gt;bits - chopped_off;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 * Either we do the actual chop off according or if we have</span></span><br><span class="line"><span class="comment">		 * chopped off all bits in this tnode walk up to our parent.</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">if</span> (chopped_off &lt;= pn-&gt;bits) &#123;</span><br><span class="line">			cindex &amp;= ~(<span class="number">1</span> &lt;&lt; (chopped_off<span class="number">-1</span>));</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			struct tnode *parent = node_parent_rcu((struct rt_trie_node *) pn);</span><br><span class="line">			<span class="keyword">if</span> (!parent)</span><br><span class="line">				<span class="keyword">goto</span> failed;</span><br><span class="line"></span><br><span class="line">			<span class="comment">/* Get Child's index */</span></span><br><span class="line">			cindex = tkey_extract_bits(pn-&gt;key, parent-&gt;pos, parent-&gt;bits);</span><br><span class="line">			pn = parent;</span><br><span class="line">			chopped_off = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">goto</span> backtrace;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">failed:</span><br><span class="line">	ret = <span class="number">1</span>;</span><br><span class="line">found:</span><br><span class="line">	rcu_read_unlock();</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="已有路由项"><a href="#已有路由项" class="headerlink" title="已有路由项"></a>已有路由项</h4><table>
+<thead>
+<tr>
+<th>标号</th>
+<th>地址</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>192.168.10.0/24</td>
+<td>11000000</td>
+<td>10101000</td>
+<td>00001010</td>
+<td>00000000</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>192.168.20.0/24</td>
+<td>11000000</td>
+<td>10101000</td>
+<td>00010100</td>
+<td>00000000</td>
+</tr>
+<tr>
+<td>A3</td>
+<td>2.232.20.0/24</td>
+<td>00000010</td>
+<td>11101000</td>
+<td>00010100</td>
+<td>00000000</td>
+</tr>
+<tr>
+<td>A4</td>
+<td>192.168.20.32/30</td>
+<td>11000000</td>
+<td>10101000</td>
+<td>00010100</td>
+<td>00100000</td>
+</tr>
+<tr>
+<td>A5</td>
+<td>192.168.20.4/30</td>
+<td>11000000</td>
+<td>10101000</td>
+<td>00010100</td>
+<td>00000100</td>
+</tr>
+<tr>
+<td>A6</td>
+<td>0.0.0.0/0</td>
+<td>00000000</td>
+<td>00000000</td>
+<td>00000000</td>
+<td>00000000</td>
+</tr>
+</tbody>
+</table>
+<h4 id="路由树结构"><a href="#路由树结构" class="headerlink" title="路由树结构"></a>路由树结构</h4><ul>
+<li>(pos=0,bits=3)<ul>
+<li>000   (pos=6,bits=1)<ul>
+<li>0   [A6]</li>
+<li>1   [A3]</li>
+</ul>
+</li>
+<li>110   (pos=19,bits=2)<ul>
+<li>01   [A1]</li>
+<li>10   (pos=26,bits=1)<ul>
+<li>1   [A4]</li>
+<li>0   (pos=29,bits=1)<ul>
+<li>0   [A2]</li>
+<li>1   [A5]</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="待查找ip"><a href="#待查找ip" class="headerlink" title="待查找ip"></a>待查找ip</h4><table>
+<thead>
+<tr>
+<th>标号</th>
+<th>地址</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A7</td>
+<td>64.X.X.X/24</td>
+<td>01000000</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+</tr>
+</tbody>
+</table>
+<h4 id="查找过程"><a href="#查找过程" class="headerlink" title="查找过程"></a>查找过程</h4><ol>
+<li>首先从block_2开始，且根不为null，之后到block_3；</li>
+<li>根是一个node，到block_4处理；</li>
+<li>先看一下用到的几个变量（chopped_off = 0; pos =0; bits = 3；key = 64 X X X ）</li>
+<li>根据pos、bits、key可以得到cindex = b010；</li>
+<li>根据路由树结构，我们可以看出，该根node只有两个child，分别是[000]和[110]，因此对应cindex为空，则到block_4_1来处理。</li>
+<li>发现没有child，会直接跳转到backtrace（回溯）来进行处理，这里解释一下回溯处理的目的，通过回溯来查找与cindex所指向的空child同一父node下的其他child的中能最长前缀匹配cindex的child。</li>
+<li>先来直观的看一下cindex是如何与其他child最长前缀匹配的，cindex = [010];其他child = [000]、[110]，从左起第一位开始，[000] 和 [010] 都为0，左起第二位，不匹配了，所以这里最长匹配到第1位。假设有个child = [011]，则最长匹配到第2位。</li>
+<li>下面给出backtrace处理过程中关键值的变化，pn-&gt;bits = 3没变</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>说明</th>
+<th>chopped_off</th>
+<th>cindex</th>
+<th>chopped_off &lt;= pn-&gt;bits</th>
+<th>!(cindex &amp; (1&lt;&lt;(chopped_off-1)))</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>while()条件处理</td>
+<td>1</td>
+<td>010b</td>
+<td>真</td>
+<td>!(010b &amp; 001b) 结果为非0</td>
+</tr>
+<tr>
+<td>while内处理</td>
+<td>2</td>
+</tr>
+<tr>
+<td>while()条件处理</td>
+<td>2</td>
+<td>010b</td>
+<td>真</td>
+<td>!(010b &amp; 010b) 结果为0</td>
+</tr>
+</tbody>
+</table>
+<p>注释：while循环干了什么？<br>找到这bits位，最后一位为1的位置。那么找到了，就是右起第2位，之后会把这位值修改为0，设置成新cindex，通过{ cindex &amp;= ~(1 &lt;&lt; (chopped_off-1)) };完成修改。当前的前缀长度为1（current_prefix_length = 1 ）</p>
+<ol>
+<li>好了现在我们有新的cindex了，再返回while(pn)循环；</li>
+<li>n = tnode_get_child_rcu(pn, cindex);该函数找到child，这次child是个leaf;</li>
+<li>进入block_4_2去处理，check_leaf()返回的ret会大于0（注释：待补充解释），然后再次到backtrace去处理；</li>
+<li>同样看相关值变化</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>说明</th>
+<th>chopped_off</th>
+<th>cindex</th>
+<th>chopped_off &lt;= pn-&gt;bits</th>
+<th>!(cindex &amp; (1&lt;&lt;(chopped_off-1)))</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>while()条件处理</td>
+<td>3</td>
+<td>000b</td>
+<td>真</td>
+<td>!(000b &amp; 001b) 结果为非0</td>
+</tr>
+<tr>
+<td>while内处理</td>
+<td>4</td>
+</tr>
+<tr>
+<td>while()条件处理</td>
+<td>4</td>
+<td>000b</td>
+<td>假</td>
+<td>不考虑</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>current_prefix_length = pn-&gt;pos + pn-&gt;bits - chopped_off；结果为-1；</li>
+<li>if (chopped_off &lt;= pn-&gt;bits)不满足此条件，会到cindex父node的父node，再继续匹配最长前缀，node_parent_rcu()获取到的父node为空，因此跳转到failed执行，退出。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sophotomato.github.io/2017/09/29/fib-table-lookup路由查表过程分析/" data-id="cjbtc2nfr0005h8s9lbcaof2o" class="article-share-link">Teilen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernel/">kernel</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/内核网络/">内核网络</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/09/30/保留地址及检测方法/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          保留地址及检测方法
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/09/27/markdown-syntax/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">markdown语法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Kategorien</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Diary/">Diary</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/gcc/">gcc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kernel/">kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/内核网络/">内核网络</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/gcc/" style="font-size: 10px;">gcc</a> <a href="/tags/kernel/" style="font-size: 20px;">kernel</a> <a href="/tags/内核网络/" style="font-size: 20px;">内核网络</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/12/30/hello-world2/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2017/12/30/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/14/gcc/">gcc</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/10/ip-rcv-finish/">ip_rcv_finish()处理sk_buff数据分析</a>
+          </li>
+        
+          <li>
+            <a href="/2017/10/10/ip-rcv/">ip_rcv()处理sk_buff数据分析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Wilson Wang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
