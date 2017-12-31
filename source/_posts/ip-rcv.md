@@ -8,8 +8,8 @@ tags:
 
 > 所有源码来自[kernel.org](https://www.kernel.org)
 > 内核版本号3.10
-
-```c {.line-numbers}
+<!-- more -->
+```c
 /*
  * 	Main IP Receive routine.
  */

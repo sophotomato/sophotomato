@@ -10,6 +10,7 @@ tags:
 #### gcc指定头文件的三种情况：
 1. 会在默认情况下指定到/usr/include文件夹
 2. gcc使用了-I指定路径的方式
+<!-- more -->
 -I dir
     Add the directory dir to the list of directories to be searched for
     header files.  Directories named by -I are searched before the

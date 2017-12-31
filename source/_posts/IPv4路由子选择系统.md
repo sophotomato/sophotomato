@@ -18,6 +18,7 @@ ip_rcv()
         ->fib_lookup()
           ->fib_table_lookup()
 ```
+<!-- more -->
 > 关于`fib_table_lookup()`查表的内容可查看本站其他博文。
 ##### 路由表
 

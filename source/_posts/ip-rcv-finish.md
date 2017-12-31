@@ -8,8 +8,8 @@ tags:
 
 > 所有源码来自[kernel.org](https://www.kernel.org)
 > 内核版本号3.10
-
-```c {.line-numbers}
+<!-- more -->
+```c
 static int ip_rcv_finish(struct sk_buff *skb)
 {
 	const struct iphdr *iph = ip_hdr(skb);
