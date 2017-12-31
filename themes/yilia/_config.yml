@@ -8,7 +8,7 @@ menu:
 
 # SubNav
 subnav:
-  github: "https://github.com/sophomoretomato"
+  github: "https://github.com/sophotomato"
   weibo: "https://weibo.com/wangsheng1994"
   rss: /atom.xml
   #zhihu: "#"
@@ -69,7 +69,7 @@ top: true
 # Miscellaneous
 baidu_analytics: ''
 google_analytics: ''
-favicon: /favicon.png
+favicon: /images/favicon.ico
 
 #你的头像url
 avatar: /images/avatar.jpg
