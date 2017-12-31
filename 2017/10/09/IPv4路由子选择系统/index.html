@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="https://sophotomato.github.io">
   <title>IPv4路由子选择系统 | Sopho Tomato</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="所有源码来自kernel.org内核版本号3.10  IPv4处理接收包过程123456ip_rcv()  -&amp;gt;ip_rcv_finish()    -&amp;gt;ip_route_input_noref()      -&amp;gt;ip_route_input_slow()        -&amp;gt;fib_lookup()          -&amp;gt;fib_table_lookup()  关于">
+  <meta name="description" content="所有源码来自kernel.org内核版本号3.10  IPv4处理接收包过程123456ip_rcv()  -&amp;gt;ip_rcv_finish()    -&amp;gt;ip_route_input_noref()      -&amp;gt;ip_route_input_slow()        -&amp;gt;fib_lookup()          -&amp;gt;fib_table_lookup()">
 <meta name="keywords" content="内核网络,kernel">
 <meta property="og:type" content="article">
 <meta property="og:title" content="IPv4路由子选择系统">
 <meta property="og:url" content="https://sophotomato.github.io/2017/10/09/IPv4路由子选择系统/index.html">
 <meta property="og:site_name" content="Sopho Tomato">
-<meta property="og:description" content="所有源码来自kernel.org内核版本号3.10  IPv4处理接收包过程123456ip_rcv()  -&amp;gt;ip_rcv_finish()    -&amp;gt;ip_route_input_noref()      -&amp;gt;ip_route_input_slow()        -&amp;gt;fib_lookup()          -&amp;gt;fib_table_lookup()  关于">
-<meta property="og:updated_time" content="2017-10-09T11:27:39.000Z">
+<meta property="og:description" content="所有源码来自kernel.org内核版本号3.10  IPv4处理接收包过程123456ip_rcv()  -&amp;gt;ip_rcv_finish()    -&amp;gt;ip_route_input_noref()      -&amp;gt;ip_route_input_slow()        -&amp;gt;fib_lookup()          -&amp;gt;fib_table_lookup()">
+<meta property="og:updated_time" content="2017-12-30T15:22:56.357Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="IPv4路由子选择系统">
-<meta name="twitter:description" content="所有源码来自kernel.org内核版本号3.10  IPv4处理接收包过程123456ip_rcv()  -&amp;gt;ip_rcv_finish()    -&amp;gt;ip_route_input_noref()      -&amp;gt;ip_route_input_slow()        -&amp;gt;fib_lookup()          -&amp;gt;fib_table_lookup()  关于">
+<meta name="twitter:description" content="所有源码来自kernel.org内核版本号3.10  IPv4处理接收包过程123456ip_rcv()  -&amp;gt;ip_rcv_finish()    -&amp;gt;ip_route_input_noref()      -&amp;gt;ip_route_input_slow()        -&amp;gt;fib_lookup()          -&amp;gt;fib_table_lookup()">
   
     <link rel="alternative" href="/atom.xml" title="Sopho Tomato" type="application/atom+xml">
   
@@ -184,6 +184,7 @@
 <p>所有源码来自<a href="https://www.kernel.org" target="_blank" rel="noopener">kernel.org</a><br>内核版本号3.10</p>
 </blockquote>
 <h4 id="IPv4处理接收包过程"><a href="#IPv4处理接收包过程" class="headerlink" title="IPv4处理接收包过程"></a>IPv4处理接收包过程</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ip_rcv()</span><br><span class="line">  -&gt;ip_rcv_finish()</span><br><span class="line">    -&gt;ip_route_input_noref()</span><br><span class="line">      -&gt;ip_route_input_slow()</span><br><span class="line">        -&gt;fib_lookup()</span><br><span class="line">          -&gt;fib_table_lookup()</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 <blockquote>
 <p>关于<code>fib_table_lookup()</code>查表的内容可查看本站其他博文。</p>
 <h5 id="路由表"><a href="#路由表" class="headerlink" title="路由表"></a>路由表</h5></blockquote>

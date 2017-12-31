@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="https://sophotomato.github.io">
   <title>gcc | Sopho Tomato</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#include &amp;lt;&amp;gt;与#inlucde “”#include &amp;lt;&amp;gt; 会直接到系统指定的目录中去找头文件。#include “” 先到源文件所在文件夹去找，然后再到系统指定的目录中去找头文件。 gcc指定头文件的三种情况： 会在默认情况下指定到/usr/include文件夹 gcc使用了-I指定路径的方式-I dir Add the directory dir to the">
+  <meta name="description" content="#include &amp;lt;&amp;gt;与#inlucde “”#include &amp;lt;&amp;gt; 会直接到系统指定的目录中去找头文件。#include “” 先到源文件所在文件夹去找，然后再到系统指定的目录中去找头文件。 gcc指定头文件的三种情况： 会在默认情况下指定到/usr/include文件夹 gcc使用了-I指定路径的方式">
 <meta name="keywords" content="gcc">
 <meta property="og:type" content="article">
 <meta property="og:title" content="gcc">
 <meta property="og:url" content="https://sophotomato.github.io/2017/10/14/gcc/index.html">
 <meta property="og:site_name" content="Sopho Tomato">
-<meta property="og:description" content="#include &amp;lt;&amp;gt;与#inlucde “”#include &amp;lt;&amp;gt; 会直接到系统指定的目录中去找头文件。#include “” 先到源文件所在文件夹去找，然后再到系统指定的目录中去找头文件。 gcc指定头文件的三种情况： 会在默认情况下指定到/usr/include文件夹 gcc使用了-I指定路径的方式-I dir Add the directory dir to the">
-<meta property="og:updated_time" content="2017-10-14T13:24:14.000Z">
+<meta property="og:description" content="#include &amp;lt;&amp;gt;与#inlucde “”#include &amp;lt;&amp;gt; 会直接到系统指定的目录中去找头文件。#include “” 先到源文件所在文件夹去找，然后再到系统指定的目录中去找头文件。 gcc指定头文件的三种情况： 会在默认情况下指定到/usr/include文件夹 gcc使用了-I指定路径的方式">
+<meta property="og:updated_time" content="2017-12-30T15:21:04.932Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="gcc">
-<meta name="twitter:description" content="#include &amp;lt;&amp;gt;与#inlucde “”#include &amp;lt;&amp;gt; 会直接到系统指定的目录中去找头文件。#include “” 先到源文件所在文件夹去找，然后再到系统指定的目录中去找头文件。 gcc指定头文件的三种情况： 会在默认情况下指定到/usr/include文件夹 gcc使用了-I指定路径的方式-I dir Add the directory dir to the">
+<meta name="twitter:description" content="#include &amp;lt;&amp;gt;与#inlucde “”#include &amp;lt;&amp;gt; 会直接到系统指定的目录中去找头文件。#include “” 先到源文件所在文件夹去找，然后再到系统指定的目录中去找头文件。 gcc指定头文件的三种情况： 会在默认情况下指定到/usr/include文件夹 gcc使用了-I指定路径的方式">
   
     <link rel="alternative" href="/atom.xml" title="Sopho Tomato" type="application/atom+xml">
   
@@ -183,7 +183,8 @@
         <h4 id="include-lt-gt-与-inlucde-“”"><a href="#include-lt-gt-与-inlucde-“”" class="headerlink" title="#include &lt;&gt;与#inlucde “”"></a>#include &lt;&gt;与#inlucde “”</h4><p>#include &lt;&gt; 会直接到系统指定的目录中去找头文件。<br>#include “” 先到源文件所在文件夹去找，然后再到系统指定的目录中去找头文件。</p>
 <h4 id="gcc指定头文件的三种情况："><a href="#gcc指定头文件的三种情况：" class="headerlink" title="gcc指定头文件的三种情况："></a>gcc指定头文件的三种情况：</h4><ol>
 <li>会在默认情况下指定到/usr/include文件夹</li>
-<li>gcc使用了-I指定路径的方式<br>-I dir<br> Add the directory dir to the list of directories to be searched for<br> header files.  Directories named by -I are searched before the<br> standard system include directories.  If the directory dir is a<br> standard system include directory, the option is ignored to ensure<br> that the default search order for system directories and the<br> special treatment of system headers are not defeated .  If dir<br> begins with “=”, then the “=” will be replaced by the sysroot<br> prefix; see –sysroot and -isysroot.</li>
+<li>gcc使用了-I指定路径的方式<a id="more"></a>
+-I dir<br> Add the directory dir to the list of directories to be searched for<br> header files.  Directories named by -I are searched before the<br> standard system include directories.  If the directory dir is a<br> standard system include directory, the option is ignored to ensure<br> that the default search order for system directories and the<br> special treatment of system headers are not defeated .  If dir<br> begins with “=”, then the “=” will be replaced by the sysroot<br> prefix; see –sysroot and -isysroot.</li>
 <li>参数：-nostdinc使编译器不再系统缺省的头文件目录里面找头文件,一般和-I联合使用,明确限定头文件的位置。</li>
 </ol>
 <p>注：参数：-nostdinc使编译器不再系统缺省的头文件目录里面找头文件,一般和-I联合使用,明确限定头文件的位置。</p>
